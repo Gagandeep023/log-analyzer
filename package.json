@@ -1,6 +1,6 @@
 {
   "name": "@gagandeep023/log-analyzer",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Zero-dependency JSONL log analyzer with anomaly detection, percentile stats, and report generation",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
