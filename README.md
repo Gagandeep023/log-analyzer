@@ -20,14 +20,14 @@ One JSON object per line. Eight fields are required, two are optional:
 ```jsonc
 {
   "timestamp": "2026-02-20T10:15:00.000Z",  // string, required
-  "level": "error",                          // info | warn | error | fatal
+  "level": "error",                 // info | warn | error | fatal
   "service": "api",                          // required
   "method": "POST",                          // required
   "path": "/v1/checkout",                    // required
   "statusCode": 500,                         // integer, required
-  "responseTime": 1420,                      // non-negative number (ms), required
+  "responseTime": 1420,             // non-negative ms, required
   "requestId": "req_8f21",                   // required
-  "error": "Timeout connecting to payments", // optional, drives pattern grouping
+  "error": "Timeout connecting to payments",  // optional, grouped
   "metadata": { "region": "ap-south-1" }     // optional, passed through
 }
 ```
@@ -38,7 +38,11 @@ line number:
 
 ```ts
 const { entries, errors } = parse(raw);
-// errors: [{ line: 42, message: 'Invalid level: debug. Must be info|warn|error|fatal', raw: '...' }]
+// errors: [{
+//   line: 42,
+//   message: 'Invalid level: debug. Must be info|warn|error|fatal',
+//   raw: '...',
+// }]
 ```
 
 A log where half the lines are malformed will still produce an analysis, and
@@ -117,7 +121,7 @@ export const DEFAULT_CONFIG = {
   errorRateThreshold: 2,        // standard deviations above the mean
   latencyOutlierMultiplier: 1.5,// multiple of p99
   bucketSizeMs: 60000,          // timeline bucket, 1 minute
-  minBucketsForSpike: 5,        // below this, spike detection is skipped
+  minBucketsForSpike: 5,        // below this, spikes are skipped
   statusAnomalyThreshold: 0.1,  // share of requests on one status code
 };
 ```
@@ -202,10 +206,14 @@ Each `ErrorPattern` keeps up to three real examples plus `firstSeen` and
 ## Reports
 
 ```ts
-import { generateMarkdownReport, generateJsonReport } from '@gagandeep023/log-analyzer';
+import { generateMarkdownReport, generateJsonReport }
+  from '@gagandeep023/log-analyzer';
 
-const md = generateMarkdownReport(result);   // human-readable, paste into an issue
-const json = generateJsonReport(result);     // machine-readable, diff between runs
+// human-readable, paste into an issue
+const md = generateMarkdownReport(result);
+
+// machine-readable, diff between runs
+const json = generateJsonReport(result);
 ```
 
 ---
